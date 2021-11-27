@@ -109,14 +109,12 @@ namespace Gamestore.Controllers
             try
             {
                 List<UserDTO> alluserDTO = new List<UserDTO>();
-                //DTO es utilizado para enviar solo unos campos, no todos los de la base de datos
                 var users = _userManager.Users.ToList();
                 foreach (var user in users)
                 {
                     var roles = (await _userManager.GetRolesAsync(user)).ToList();
                     alluserDTO.Add(new UserDTO(user.FullName, user.Email, user.UserName, user.DateCreated, roles, user.DefaultCity));
                 }
-                //return await Task.FromResult(users);
                 return await Task.FromResult(new ResponseModel(ResponseCode.OK, "", alluserDTO));
             }
             catch (Exception ex)
