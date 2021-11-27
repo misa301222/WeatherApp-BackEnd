@@ -8,7 +8,7 @@ namespace WeatherApp.Models.Catalog
 {
     public class JobApplication
     {
-        public JobApplication(string email, string fullName, int desiredPosition, DateTime applicationDate, string address, string city, string phoneNumber, string education, bool degree, float payment, string description, int applicationStatus)
+        public JobApplication(string email, string fullName, int desiredPosition, DateTime applicationDate, string address, string city, string phoneNumber, string education, bool degree, double payment, string description, int applicationStatus)
         {
             Email = email;
             FullName = fullName;
@@ -34,7 +34,7 @@ namespace WeatherApp.Models.Catalog
         public string PhoneNumber { get; set; }
         public string Education { get; set; }
         public bool Degree { get; set; }
-        public float Payment { get; set; }
+        public double Payment { get; set; }
         public string Description { get; set; }
         public int ApplicationStatus { get; set; }
     }
