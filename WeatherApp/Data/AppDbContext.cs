@@ -35,8 +35,8 @@ namespace WeatherApp.EntityFrameworkCore
         public DbSet<Temperature> Temperature { get; set; }
         public DbSet<DescriptionTemperature> DescriptionTemperature { get; set; }
         public DbSet<ApplicationStatus> ApplicationStatus { get; set; }
-        public DbSet<WeatherApp.Models.Catalog.DesiredPosition> DesiredPosition { get; set; }
-        public DbSet<WeatherApp.Models.Catalog.JobApplication> JobApplication { get; set; }
+        public DbSet<DesiredPosition> DesiredPosition { get; set; }
+        public DbSet<JobApplication> JobApplication { get; set; }
 
     }
 }
