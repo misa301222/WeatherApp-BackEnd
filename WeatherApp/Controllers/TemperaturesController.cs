@@ -48,6 +48,12 @@ namespace WeatherApp.Controllers
             return await _context.Temperature.Where(x => x.CityId == cityId).ToListAsync();
         }
 
+        [HttpGet("GetAllTemperaturesFromDateToEnd/{cityId}/{dateTemperature}")]
+        public async Task<ActionResult<IEnumerable<Temperature>>> GetAllTemperaturesFromDateToEnd(int cityId, DateTime dateTemperature)
+        {
+            return await _context.Temperature.Where(x => x.CityId == cityId && x.DateTemperature >= dateTemperature).ToListAsync();
+        }
+
 
         [HttpGet("GetTemperatureByCityIdAndDateTemperature/{cityId}/{dateTemperature}")]
         public async Task<ActionResult<Temperature>> GetTemperatureByCityIdAndDateTemperature(int cityId, DateTime dateTemperature)
@@ -73,6 +79,39 @@ namespace WeatherApp.Controllers
             for (int i = 1; i < 6; i++)
             {
                 //dateTemperatureAux.AddDays(i);
+                try
+                {
+                    var result = await _context.Temperature.Where(x => x.CityId == cityId && x.DateTemperature == dateTemperatureAux.AddDays(i)).SingleAsync();
+                    if (result != null)
+                    {
+                        nextFiveTemperatures.Add(result);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            if (temperature == null)
+            {
+                return NotFound();
+            }
+
+            return nextFiveTemperatures;
+        }
+
+
+        [HttpGet("GetTemperatureByCityIdAndDateTemperatureNextFourAndToday/{cityId}/{dateTemperature}")]
+        public async Task<ActionResult<IEnumerable<Temperature>>> GetTemperatureByCityIdAndDateTemperatureNextFourAndToday(int cityId, DateTime dateTemperature)
+        {
+            var temperature = await _context.Temperature.Where(x => x.CityId == cityId && x.DateTemperature == dateTemperature).SingleAsync();
+            var dateTemperatureAux = dateTemperature;
+            var nextFiveTemperatures = new List<Temperature>();
+
+            nextFiveTemperatures.Add(temperature);
+            for (int i = 1; i < 5; i++)
+            {
                 try
                 {
                     var result = await _context.Temperature.Where(x => x.CityId == cityId && x.DateTemperature == dateTemperatureAux.AddDays(i)).SingleAsync();
@@ -165,6 +204,20 @@ namespace WeatherApp.Controllers
 
             _context.Temperature.Remove(temperature);
             await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("DeleteAllTemperaturesByCityId/{cityId}")]
+        public async Task<IActionResult> DeleteAllTemperaturesByCityId(int cityId)
+        {
+            var temperatures = await _context.Temperature.Where(x => x.CityId == cityId).ToListAsync();
+            foreach (var temperature in temperatures)
+            {
+                _context.Temperature.Remove(temperature);
+                await _context.SaveChangesAsync();
+            }
+
 
             return NoContent();
         }

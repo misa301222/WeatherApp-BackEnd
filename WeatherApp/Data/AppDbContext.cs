@@ -37,6 +37,8 @@ namespace WeatherApp.EntityFrameworkCore
         public DbSet<ApplicationStatus> ApplicationStatus { get; set; }
         public DbSet<DesiredPosition> DesiredPosition { get; set; }
         public DbSet<JobApplication> JobApplication { get; set; }
+        public DbSet<WeatherApp.Models.Catalog.NotificationType> NotificationType { get; set; }
+        public DbSet<WeatherApp.Models.Catalog.TemperatureNotification> TemperatureNotification { get; set; }
 
     }
 }

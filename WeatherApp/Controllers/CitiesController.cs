@@ -100,7 +100,28 @@ namespace WeatherApp.Controllers
             return NoContent();
         }
 
-        private bool CityExists(int id)
+        [HttpGet("GetAllCitiesByCountryId/{countryId}")]
+        public async Task<ActionResult<IEnumerable<City>>> GetAllCitiesByCountryId(int countryId)
+        {
+            var cities = await _context.City.Where(x => x.CountryId == countryId).ToListAsync();
+
+            return cities;
+        }
+
+        [HttpDelete("DeleteAllCitiesByCountryId/{countryId}")]
+        public async Task<IActionResult> DeleteAllCitiesByCountryId(int countryId)
+        {
+            var cities = await _context.City.Where(x => x.CountryId == countryId).ToListAsync();
+            foreach (var city in cities)
+            {
+                _context.City.Remove(city);
+                await _context.SaveChangesAsync();
+            }
+
+            return NoContent();
+        }
+
+            private bool CityExists(int id)
         {
             return _context.City.Any(e => e.CityId == id);
         }
