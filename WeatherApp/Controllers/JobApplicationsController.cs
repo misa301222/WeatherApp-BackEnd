@@ -42,6 +42,19 @@ namespace WeatherApp.Controllers
             return jobApplication;
         }
 
+        [HttpGet("GetJobApplicationByEmail/{email}")]
+        public async Task<ActionResult<JobApplication>> GetJobApplicationByEmail(string email)
+        {
+            var jobApplication = await _context.JobApplication.Where(x => x.Email == email).FirstAsync();
+
+            if (jobApplication == null)
+            {
+                return NotFound();
+            }
+
+            return jobApplication;
+        }
+
         // PUT: api/JobApplications/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

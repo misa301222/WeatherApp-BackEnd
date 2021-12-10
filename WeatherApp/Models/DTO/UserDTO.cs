@@ -8,7 +8,7 @@ namespace WeatherApp.Models.DTO
 {
     public class UserDTO
     {
-        public UserDTO(string fullname, string email, string username, DateTime datecreated, List<String> roles, int defaultCity)
+        public UserDTO(string fullname, string email, string username, DateTime datecreated, List<String> roles, int defaultCity, int defaultTheme)
         {
             this.FullName = fullname;
             this.Email = email;
@@ -16,6 +16,7 @@ namespace WeatherApp.Models.DTO
             this.DateCreated = datecreated;
             this.Roles = roles;
             this.DefaultCity = defaultCity;
+            this.DefaultTheme = defaultTheme;
         }
 
         public String FullName { get; set; }
@@ -25,5 +26,6 @@ namespace WeatherApp.Models.DTO
         public String Token { get; set; }
         public List<String> Roles { get; set; }
         public int DefaultCity { get; set; }
+        public int DefaultTheme { get; set; }
     }
 }

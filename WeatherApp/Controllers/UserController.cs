@@ -59,7 +59,7 @@ namespace Gamestore.Controllers
                         return await Task.FromResult(new ResponseModel(ResponseCode.ERROR, "Role doesnt exist", null));
                     }
                 }
-                var user = new AppUser() { FullName = model.FullName, Email = model.Email, UserName = model.Email, DateCreated = DateTime.Now, DateModified = DateTime.Now, DefaultCity = 0 };
+                var user = new AppUser() { FullName = model.FullName, Email = model.Email, UserName = model.Email, DateCreated = DateTime.Now, DateModified = DateTime.Now, DefaultCity = 0, DefaultTheme = 0 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -90,7 +90,7 @@ namespace Gamestore.Controllers
                 var currentUser = await _userManager.FindByEmailAsync(email);
                 var roles = (await _userManager.GetRolesAsync(currentUser)).ToList();
 
-                userFinal = new UserDTO(currentUser.FullName, currentUser.Email, currentUser.UserName, currentUser.DateCreated, roles, currentUser.DefaultCity);
+                userFinal = new UserDTO(currentUser.FullName, currentUser.Email, currentUser.UserName, currentUser.DateCreated, roles, currentUser.DefaultCity, currentUser.DefaultTheme);
 
                 return await Task.FromResult(new ResponseModel(ResponseCode.OK, "", userFinal));
             }
@@ -109,14 +109,12 @@ namespace Gamestore.Controllers
             try
             {
                 List<UserDTO> alluserDTO = new List<UserDTO>();
-                //DTO es utilizado para enviar solo unos campos, no todos los de la base de datos
                 var users = _userManager.Users.ToList();
                 foreach (var user in users)
                 {
                     var roles = (await _userManager.GetRolesAsync(user)).ToList();
-                    alluserDTO.Add(new UserDTO(user.FullName, user.Email, user.UserName, user.DateCreated, roles, user.DefaultCity));
+                    alluserDTO.Add(new UserDTO(user.FullName, user.Email, user.UserName, user.DateCreated, roles, user.DefaultCity, user.DefaultTheme));
                 }
-                //return await Task.FromResult(users);
                 return await Task.FromResult(new ResponseModel(ResponseCode.OK, "", alluserDTO));
             }
             catch (Exception ex)
@@ -139,7 +137,7 @@ namespace Gamestore.Controllers
                     var roles = (await _userManager.GetRolesAsync(user)).ToList();
                     if (roles.Any(x => x == "User"))
                     {
-                        alluserDTO.Add(new UserDTO(user.FullName, user.Email, user.UserName, user.DateCreated, roles, user.DefaultCity));
+                        alluserDTO.Add(new UserDTO(user.FullName, user.Email, user.UserName, user.DateCreated, roles, user.DefaultCity, user.DefaultTheme));
                     }
 
                 }
@@ -181,7 +179,7 @@ namespace Gamestore.Controllers
                     {
                         var appUser = await _userManager.FindByEmailAsync(model.Email);
                         var roles = (await _userManager.GetRolesAsync(appUser)).ToList();
-                        var user = new UserDTO(appUser.FullName, appUser.Email, appUser.UserName, appUser.DateCreated, roles, appUser.DefaultCity);
+                        var user = new UserDTO(appUser.FullName, appUser.Email, appUser.UserName, appUser.DateCreated, roles, appUser.DefaultCity, appUser.DefaultTheme);
                         //return await Task.FromResult("Login successfully");
                         user.Token = GenerateToken(appUser, roles);
                         return await Task.FromResult(new ResponseModel(ResponseCode.OK, "", user));
@@ -271,6 +269,27 @@ namespace Gamestore.Controllers
                 return await Task.FromResult(new ResponseModel(ResponseCode.ERROR, ex.Message, null));
             }
 
+        }
+
+        [HttpPost]
+        [Route("UpdateDefaultTheme")]
+        public async Task<object> UpdateDefaultTheme([FromBody] UpdateDefaultThemeUserBindingModel model)
+        {
+            try
+            {
+                var currentUser = await _userManager.FindByEmailAsync(model.Email);
+                currentUser.DefaultTheme = model.DefaultTheme;
+                var result = await _userManager.UpdateAsync(currentUser);
+                if (result.Succeeded)
+                {
+                    return await Task.FromResult(new ResponseModel(ResponseCode.OK, "Theme Updated Succesfully", null));
+                }
+                return await Task.FromResult(new ResponseModel(ResponseCode.ERROR, "Something went wrong", null));
+            }
+            catch (Exception ex)
+            {
+                return await Task.FromResult(new ResponseModel(ResponseCode.ERROR, ex.Message, null));
+            }
         }
 
 

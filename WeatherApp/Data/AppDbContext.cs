@@ -26,6 +26,12 @@ namespace WeatherApp.EntityFrameworkCore
                 table.CityId,
                 table.DateTemperature
             });
+
+            builder.Entity<Reaction>().HasKey(table => new
+            {
+                table.Email,
+                table.NewsId
+            });
         }
 
         public DbSet<AppUser> AppUsers { get; set; }
@@ -35,8 +41,12 @@ namespace WeatherApp.EntityFrameworkCore
         public DbSet<Temperature> Temperature { get; set; }
         public DbSet<DescriptionTemperature> DescriptionTemperature { get; set; }
         public DbSet<ApplicationStatus> ApplicationStatus { get; set; }
-        public DbSet<WeatherApp.Models.Catalog.DesiredPosition> DesiredPosition { get; set; }
-        public DbSet<WeatherApp.Models.Catalog.JobApplication> JobApplication { get; set; }
+        public DbSet<DesiredPosition> DesiredPosition { get; set; }
+        public DbSet<JobApplication> JobApplication { get; set; }
+        public DbSet<NotificationType> NotificationType { get; set; }
+        public DbSet<TemperatureNotification> TemperatureNotification { get; set; }
+        public DbSet<News> News { get; set; }
+        public DbSet<WeatherApp.Models.Catalog.Reaction> Reaction { get; set; }
 
     }
 }

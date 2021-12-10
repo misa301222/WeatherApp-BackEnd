@@ -13,5 +13,6 @@ namespace WeatherApp.Data
         public DateTime DateCreated { set; get; }
         public DateTime DateModified { set; get; }
         public int DefaultCity { get; set; }
+        public int DefaultTheme { get; set; }
     }
 }
