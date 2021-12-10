@@ -31,7 +31,27 @@ namespace WeatherApp.Controllers
         [HttpGet("GetTemperatureNotificationsByCityIdAndDateTemperature/{cityId}/{dateTemperature}")]
         public async Task<ActionResult<IEnumerable<TemperatureNotification>>> GetTemperatureNotificationsByCityIdAndDateTemperature(int cityId, DateTime dateTemperature)
         {
-            return await _context.TemperatureNotification.Where(x => x.CityId == cityId && x.DateTemperature == dateTemperature).ToListAsync();
+            var result = await _context.TemperatureNotification.Where(x => x.CityId == cityId && x.DateTemperature == dateTemperature).ToListAsync();
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return result;
+        }
+
+        [HttpGet("GetTemperatureNotificationsByCityId/{cityId}")]
+        public async Task<ActionResult<IEnumerable<TemperatureNotification>>> GetTemperatureNotificationsByCityId(int cityId)
+        {
+            var result = await _context.TemperatureNotification.Where(x => x.CityId == cityId).ToListAsync();
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return result;
         }
 
         // GET: api/TemperatureNotifications/5

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WeatherApp.EntityFrameworkCore;
+using WeatherApp.Models;
 using WeatherApp.Models.Catalog;
 
 namespace WeatherApp.Controllers
@@ -48,6 +50,21 @@ namespace WeatherApp.Controllers
             return await _context.Temperature.Where(x => x.CityId == cityId).ToListAsync();
         }
 
+        [HttpGet("GetTemperatureFromDateToEndLimitNinety/{cityId}/{dateTemperature}")]
+        public async Task<ActionResult<IEnumerable<Temperature>>> GetTemperatureFromDateToEndLimitNinety(int cityId, DateTime dateTemperature)
+        {
+            var temperatures = await _context.Temperature.Where(x => x.CityId == cityId && x.DateTemperature >= dateTemperature).ToListAsync();
+
+            if (temperatures == null)
+            {
+                return NoContent();
+            }
+
+            List<Temperature> temperaturesLimited = temperatures.Take(90).ToList();            
+
+            return temperaturesLimited;
+        }
+
         [HttpGet("GetAllTemperaturesFromDateToEnd/{cityId}/{dateTemperature}")]
         public async Task<ActionResult<IEnumerable<Temperature>>> GetAllTemperaturesFromDateToEnd(int cityId, DateTime dateTemperature)
         {
@@ -66,6 +83,45 @@ namespace WeatherApp.Controllers
             }
 
             return temperature;
+        }
+
+        [HttpGet("GetTemperatureMonthAverageYearByCityIdAndYear/{cityId}/{year}")]
+        public async Task<object> GetTemperatureMonthAverageYearByCityIdAndYear(int cityId, int year)
+        {
+            List<double> averageByMonth = new List<double>();
+            List<MonthAverageModel> averageMonth = new List<MonthAverageModel>();
+            for (int i = 0; i < 12; i++)
+            {
+                var maxTemperatureSum = 0.0;
+                var minTemperatureSum = 0.0;
+                var windSum = 0.0;
+                var precipitationSum = 0.0;
+
+                var listOfMonth = await _context.Temperature.Where(x => x.DateTemperature.Month == (i + 1) && x.CityId == cityId && x.DateTemperature.Year == year).ToListAsync();
+                foreach (var month in listOfMonth)
+                {
+                    maxTemperatureSum += month.MaxTemperature;
+                    minTemperatureSum += month.MinTemperature;
+                    windSum += month.WindTemperature;
+                    precipitationSum += month.PrecipitationTemperature;
+                }
+                maxTemperatureSum /= (DateTime.DaysInMonth(year, (i + 1)));
+                maxTemperatureSum = Math.Round(maxTemperatureSum, 2);
+
+                minTemperatureSum /= (DateTime.DaysInMonth(year, (i + 1)));
+                minTemperatureSum = Math.Round(minTemperatureSum, 2);
+
+                precipitationSum /= (DateTime.DaysInMonth(year, (i + 1)));
+                precipitationSum = Math.Round(precipitationSum, 2);
+
+                windSum /= (DateTime.DaysInMonth(year, (i + 1)));
+                windSum = Math.Round(windSum, 2);
+
+                averageMonth.Add(new MonthAverageModel(CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(i + 1), maxTemperatureSum, minTemperatureSum, precipitationSum, windSum));
+                //averageByMonth.Add(sum);
+            }
+
+            return averageMonth;
         }
 
 
